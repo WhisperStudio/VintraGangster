@@ -1,0 +1,309 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vintra Studios - AI Support Chatbot</title>
+    
+    <!-- Importerer Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Importerer Google Fonts (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Egendefinerte stiler og animasjoner */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+        }
+
+        /* Stiler for chatbot-widgeten */
+        #chat-widget-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+
+        #chat-bubble {
+            background-color: white;
+            color: black;
+            width: 3.75rem; /* 60px */
+            height: 3.75rem; /* 60px */
+            border-radius: 50%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: pulse 2.5s infinite;
+        }
+
+        #chat-bubble:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 30px rgba(255, 255, 255, 0.15);
+        }
+
+        #chat-window {
+            position: absolute;
+            bottom: 5.5rem; /* Justert for å gi mer plass */
+            right: 0;
+            width: 370px;
+            height: 520px;
+            background-color: #0A0A0A; /* Litt lysere enn svart for dybde */
+            border: 1px solid #27272a; /* Mørkegrå kantlinje */
+            border-radius: 0.75rem; /* Mindre avrundet */
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: translateY(20px) scale(0.95);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #chat-window.open {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Animasjon for meldinger */
+        .chat-message {
+            animation: slideInUp 0.5s ease;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Animasjon for "skriver..."-indikatoren */
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: #555;
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        /* Animasjon for chat-ikonet */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+
+        /* Egendefinert scrollbar */
+        #chat-messages::-webkit-scrollbar { width: 6px; }
+        #chat-messages::-webkit-scrollbar-track { background: transparent; }
+        #chat-messages::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        #chat-messages::-webkit-scrollbar-thumb:hover { background: #444; }
+
+
+        /* Responsivitet for mindre skjermer */
+        @media (max-width: 640px) {
+            #chat-widget-container { bottom: 1rem; right: 1rem; }
+            #chat-window {
+                width: calc(100vw - 2rem);
+                height: calc(100vh - 7rem);
+                bottom: 5.5rem;
+                right: 0;
+            }
+        }
+    </style>
+</head>
+<body class="text-white">
+
+    <!-- Container for hele chatbot-widgeten -->
+    <div id="chat-widget-container">
+        <!-- Chat-vinduet (skjult som standard) -->
+        <div id="chat-window" class="">
+            <!-- Header -->
+            <div class="p-4 bg-black/30 border-b border-gray-800 flex items-center space-x-3 flex-shrink-0">
+                <div id="bot-header-icon" class="w-10 h-10 text-white flex items-center justify-center">
+                   <!-- Nytt AI-ikon -->
+                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M7 12H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M15 12H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M11 16C11 14.8954 11.4477 14 12 14C12.5523 14 13 14.8954 13 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M10.5 8.5C10.5 7.67157 11.1716 7 12 7C12.8284 7 13.5 7.67157 13.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white">Vintra Support AI</h3>
+                    <p class="text-xs text-gray-400">Spør meg om hva som helst</p>
+                </div>
+            </div>
+
+            <!-- Meldinger -->
+            <div id="chat-messages" class="flex-1 p-4 space-y-4 overflow-y-auto">
+                <!-- Meldinger blir lagt til her via JavaScript -->
+            </div>
+            
+             <!-- Skriveindikator -->
+            <div id="typing-indicator" class="p-4 hidden flex-shrink-0">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 text-gray-400 flex-shrink-0 flex items-center justify-center">
+                        <!-- Nytt AI-ikon (mindre) -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M7 12H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M15 12H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M11 16C11 14.8954 11.4477 14 12 14C12.5523 14 13 14.8954 13 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M10.5 8.5C10.5 7.67157 11.1716 7 12 7C12.8284 7 13.5 7.67157 13.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="typing-indicator">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input-felt -->
+            <div class="p-3 bg-black/20 border-t border-gray-800 flex-shrink-0">
+                <form id="chat-form" class="flex items-center space-x-2">
+                    <input type="text" id="chat-input" placeholder="Skriv en melding..." class="flex-1 w-full bg-gray-900 border border-gray-700 rounded-lg py-2 px-4 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-white/80 transition duration-200">
+                    <button type="submit" class="bg-white text-black rounded-lg p-2 hover:bg-gray-200 transition duration-200 flex items-center justify-center w-10 h-10">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Boble-ikonet for å åpne/lukke chatten -->
+        <div id="chat-bubble" class="flex items-center justify-center">
+            <svg id="chat-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 transition-opacity duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <svg id="chat-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 absolute opacity-0 transition-opacity duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const chatBubble = document.getElementById('chat-bubble');
+        const chatWindow = document.getElementById('chat-window');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const typingIndicator = document.getElementById('typing-indicator');
+        const openIcon = document.getElementById('chat-open-icon');
+        const closeIcon = document.getElementById('chat-close-icon');
+
+        let isChatOpen = false;
+        let hasWelcomed = false;
+
+        // --- Event Listeners ---
+        
+        chatBubble.addEventListener('click', () => {
+            isChatOpen = !isChatOpen;
+            chatWindow.classList.toggle('open');
+            toggleIcons();
+            if (isChatOpen && !hasWelcomed) { welcomeUser(); }
+        });
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const message = chatInput.value.trim();
+            if (message) {
+                addMessage(message, 'user');
+                chatInput.value = '';
+                simulateBotResponse();
+            }
+        });
+
+        // --- Functions ---
+        
+        function toggleIcons() {
+            openIcon.style.opacity = isChatOpen ? '0' : '1';
+            closeIcon.style.opacity = isChatOpen ? '1' : '0';
+        }
+        
+        function welcomeUser() {
+            hasWelcomed = true;
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                addMessage('Hei! Jeg er Vintra sin AI-assistent. Hva kan jeg hjelpe deg med?', 'bot');
+            }, 1500);
+        }
+
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message flex items-end gap-2';
+
+            const botIconSVG = `
+                <div class="w-8 h-8 text-gray-400 flex-shrink-0 flex items-center justify-center">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 12H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 12H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 16C11 14.8954 11.4477 14 12 14C12.5523 14 13 14.8954 13 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.5 8.5C10.5 7.67157 11.1716 7 12 7C12.8284 7 13.5 7.67157 13.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>`;
+
+            if (sender === 'user') {
+                messageDiv.classList.add('justify-end');
+                messageDiv.innerHTML = `
+                    <div class="max-w-xs lg:max-w-sm">
+                        <p class="p-3 rounded-xl rounded-br-lg bg-white text-black">
+                            ${text}
+                        </p>
+                    </div>
+                `;
+            } else {
+                messageDiv.classList.add('justify-start');
+                 messageDiv.innerHTML = `
+                    ${botIconSVG}
+                    <div class="max-w-xs lg:max-w-sm">
+                        <p class="p-3 rounded-xl rounded-bl-lg bg-gray-800 text-gray-200">
+                            ${text}
+                        </p>
+                    </div>
+                `;
+            }
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+        
+        function simulateBotResponse() {
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                const botResponse = "Takk for at du tar kontakt. Dette er en demo, og jeg er fortsatt under opplæring. Snart vil jeg kunne svare på alle dine spørsmål om Vintra Studios!";
+                addMessage(botResponse, 'bot');
+            }, 2000);
+        }
+
+        function showTyping() {
+            typingIndicator.classList.remove('hidden');
+            scrollToBottom();
+        }
+
+        function hideTyping() {
+            typingIndicator.classList.add('hidden');
+        }
+
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+    </script>
+</body>
+</html>
