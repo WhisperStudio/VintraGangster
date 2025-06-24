@@ -4,31 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vintra Studios - Chat</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-  const socket = io("http://104.248.132.57:3001");
-
-  socket.on("connect", () => {
-    console.log("✅ Connected to backend via Socket.IO");
-  });
-
-  socket.on("new_message", (data) => {
-    if (data.from === "admin") {
-      addMessage(data.text, "bot");
-    }
-  });
-
-  chatForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const msg = chatInput.value.trim();
-    if (!msg) return;
-    addMessage(msg, "user");
-    socket.emit("user_message", msg); // 👈 send til backend
-    chatInput.value = "";
-  });
-
-  // Fjern simulateBotResponse helt
-</script>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
   <style>
     body {
@@ -149,9 +127,6 @@
         <h3 class="font-semibold text-white">Vintra Support AI</h3>
       </div>
       <div id="chat-messages" class="flex-1 p-4 space-y-4 overflow-y-auto text-white text-sm"></div>
-      <div id="typing" class="typing-indicator hidden">
-        <span></span><span></span><span></span>
-      </div>
       <div class="p-3 bg-black/20 border-t border-gray-800">
         <form id="chat-form" class="flex gap-2">
           <input id="chat-input" type="text" placeholder="Skriv en melding..." class="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 placeholder-gray-500 text-white focus:outline-none" />
@@ -184,6 +159,8 @@
   </div>
 
   <script>
+    const socket = io("http://104.248.132.57:3001");
+
     const chatBubble = document.getElementById("chat-bubble");
     const chatWindow = document.getElementById("chat-window");
     const chatForm = document.getElementById("chat-form");
@@ -197,8 +174,6 @@
     chatBubble.addEventListener("click", () => {
       const isVisible = chatWindow.style.display === "flex";
       chatWindow.style.display = isVisible ? "none" : "flex";
-
-      // HIDE label if chat is open
       chatLabel.classList.toggle("hidden-label", !isVisible);
 
       if (!hasWelcomed && !isVisible) {
@@ -212,8 +187,18 @@
       const msg = chatInput.value.trim();
       if (!msg) return;
       addMessage(msg, "user");
+      socket.emit("user_message", msg);
       chatInput.value = "";
-      simulateBotResponse(msg);
+    });
+
+    socket.on("connect", () => {
+      console.log("✅ Socket.IO: Tilkoblet backend");
+    });
+
+    socket.on("new_message", (data) => {
+      if (data.from === "admin") {
+        addMessage(data.text, "bot");
+      }
     });
 
     function addMessage(text, sender) {
@@ -222,27 +207,6 @@
       msg.innerHTML = `<div class="max-w-xs bg-${sender === "user" ? "white text-black" : "gray-800 text-white"} p-3 rounded-xl">${text}</div>`;
       chatMessages.appendChild(msg);
       chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function simulateBotResponse(message) {
-      typingIndicator.classList.remove("hidden");
-
-      setTimeout(() => {
-        typingIndicator.classList.add("hidden");
-
-        const msg = message.toLowerCase();
-        let reply = "We are not available on chat right now. You can contact us at support@vintrastudio.com or via Discord: https://discord.gg/8cw3962z7J";
-
-        if (msg.includes("når kommer") || msg.includes("release") || msg.includes("lansering")) {
-          reply = "Spillet kommer ut i 2026!";
-        }
-
-        if (msg.includes("jeg heter") || msg.includes("mitt navn") || msg.includes("per") || msg.includes("oscar")) {
-          reply = "I'm sorry to hear that, better luck in the next life! (:";
-        }
-
-        addMessage(reply, "bot");
-      }, 1500);
     }
   </script>
 </body>
