@@ -1,5 +1,5 @@
 {
-  "name": "vintragangster",
+  "name": "vintranew",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -8,16 +8,18 @@
     "start": "next start",
     "lint": "next lint"
   },
- "dependencies": {
-  "openai": "^4.0.0",
-  "firebase-admin": "^11.0.0",
-  "next": "^14.0.0",
-  "react": "^18.2.0",
-  "react-dom": "^18.2.0"
-},
-"devDependencies": {
-  "@types/node": "^20.0.0",
-  "@types/react": "^18.0.0",
-  "typescript": "^5.0.0"
-}
+  "dependencies": {
+    "firebase": "^10.14.1",
+    "firebase-admin": "^11.10.0",
+    "next": "^14.0.0",
+    "openai": "^4.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
 }
