@@ -1,10 +1,8 @@
 // pages/chat.tsx
 "use client";
-import { NextPage } from "next";
 import Head from "next/head";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import * as React from 'react';
-import { ReactNode } from 'react';
 import styles from "../../../styles/Chat.module.css";
 
 type IconType = "inactive" | "writing" | "error" | "user";
