@@ -12,7 +12,8 @@
   position: relative;
   background: #fff;
   border-radius: 50%;
-  width: 3.5rem; height: 3.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,20 +21,15 @@
   animation: pulse 2s infinite;
   z-index: 51;
 }
-
-/* pulse */
 @keyframes pulse {
   0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.1); opacity: 0.7; }
+  50%      { transform: scale(1.1); opacity: 0.7; }
 }
-
-/* typing bubble waves */
 @keyframes waves {
   0%   { box-shadow: 0 0 0 0 rgba(59,130,246,0.7); }
   50%  { box-shadow: 0 0 0 10px rgba(59,130,246,0); }
   100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); }
 }
-
 .bubbleTyping {
   animation: waves 1.5s infinite;
 }
@@ -47,23 +43,23 @@
   background: #0a0a0a;
   border: 1px solid #374151;
   border-radius: 0.75rem;
-  box-shadow: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 15px rgba(0,0,0,0.1),
+              0 4px 6px rgba(0,0,0,0.05);
   display: none;
   flex-direction: column;
   z-index: 60;
 }
-
 .open {
   display: flex;
 }
-
 .header {
   padding: 1rem;
   background: rgba(0,0,0,0.3);
   border-bottom: 1px solid #374151;
 }
 .headerTitle {
-  color: #fff; font-weight: 600;
+  color: #fff;
+  font-weight: 600;
 }
 
 .messages {
@@ -75,43 +71,23 @@
   gap: 0.75rem;
   font-size: 0.875rem;
   color: #fff;
-
-  /* custom scrollbar */
   scrollbar-width: thin;
   scrollbar-color: var(--thumb) transparent;
 }
-
 .messages::-webkit-scrollbar {
   width: 6px;
 }
 .messages::-webkit-scrollbar-track {
   background: transparent;
 }
-/* default thumb size */
 .messages::-webkit-scrollbar-thumb {
   background-color: var(--thumb);
   border-radius: 3px;
   transition: height 0.3s ease;
 }
-
-/* when the container also has the "top" class */
 .messages.top::-webkit-scrollbar-thumb,
 .messages.bottom::-webkit-scrollbar-thumb {
-  height: 20px; /* shrink when at top or bottom */
-}
-
-@keyframes avatarEnter {
-  from { opacity: 0; transform: scale(.5); }
-  to   { opacity: 1; transform: scale(1); }
-}
-.avatar {
-  width: 1.5rem;
-  height: 1.5rem;
-  margin-bottom: 0.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: avatarEnter 0.4s ease-out forwards;
+  height: 20px;
 }
 
 .messageRow {
@@ -122,8 +98,19 @@
 .messageRowBot  { align-items: flex-start; }
 .messageRowUser { align-items: flex-end; }
 
-
-
+.avatar {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: avatarEnter 0.4s ease-out forwards;
+}
+@keyframes avatarEnter {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
 
 .messageBubble {
   padding: 0.5rem;
@@ -133,10 +120,6 @@
 .botBubble  { background: #1f2937; color: #fff; }
 .userBubble { background: #fff;     color: #000; }
 
-@keyframes dotPulse {
-  0%,100% { opacity: 0.3; transform: scale(0.5); }
-  50%     { opacity: 1;   transform: scale(1);   }
-}
 .typing {
   display: flex;
   align-items: center;
@@ -152,6 +135,10 @@
 }
 .delay1 { animation-delay: 0.2s; }
 .delay2 { animation-delay: 0.4s; }
+@keyframes dotPulse {
+  0%,100% { opacity: 0.3; transform: scale(0.5); }
+  50%     { opacity: 1;   transform: scale(1);   }
+}
 
 .form {
   padding: 0.5rem;
@@ -161,39 +148,34 @@
   align-items: center;
   gap: 0.5rem;
 }
-
 .input {
   flex: 1;
-  max-width: 14rem;        /* cap the width */
+  max-width: 14rem;
   background: #111827;
   padding: 0.5rem 0.75rem;
   border-radius: 0.75rem;
   color: #fff;
   outline: none;
-  font-size: 0.875rem;     /* a bit smaller text */
-  transition: box-shadow 0.2s;
+  font-size: 0.875rem;
+  transition: box-shadow 0.2s ease;
 }
-
 .input:focus {
   box-shadow: 0 0 0 2px #4a6fc3;
 }
-
 .button {
-  background: #4a6fc3;     /* colored background, not white */
+  background: #4a6fc3;
   border: none;
-  padding: 0.5rem;         /* square button */
-  border-radius: 50%;      /* circle */
+  padding: 0.5rem;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: transform 0.1s ease;
 }
-
 .button:hover {
   transform: scale(1.1);
 }
-
 .button svg {
   width: 1rem;
   height: 1rem;
