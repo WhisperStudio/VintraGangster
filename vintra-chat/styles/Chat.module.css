@@ -99,8 +99,8 @@
 .messageRowUser { align-items: flex-end; }
 
 .avatar {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 2rem;
+  height: 2rem;
   margin-bottom: 0.25rem;
   display: flex;
   align-items: center;
