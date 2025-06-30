@@ -34,33 +34,27 @@ const SVG_ICONS: Record<IconType, React.ReactNode> = {
 
   // Feil
   error: (
-    <svg fill="#ffffff" viewBox="0 0 103.696 103.696" stroke="#ffffff">
-      <g>
-        <path d="M31.789,39.249l1.759-1.759l-1.76-1.761c-1.233-1.233-1.296-3.229-0.143-4.544c0.025-0.035,0.078-0.097,0.137-0.157c1.277-1.278,3.46-1.27,4.718-0.011l1.76,1.759l1.76-1.76c1.198-1.199,3.267-1.262,4.544-0.145c0.041,0.03,0.106,0.086,0.167,0.146c0.629,0.629,0.976,1.465,0.977,2.354c0,0.89-0.346,1.727-0.976,2.356l-1.76,1.76l1.758,1.759c0.63,0.629,0.977,1.466,0.977,2.355c0,0.89-0.346,1.727-0.976,2.357c-1.258,1.26-3.452,1.261-4.712,0L38.261,42.2l-1.758,1.758c-0.631,0.63-1.467,0.977-2.356,0.977c-0.89,0-1.727-0.347-2.356-0.977C30.491,42.662,30.491,40.549,31.789,39.249z M59.906,39.234l1.759-1.759l-1.76-1.761c-1.232-1.233-1.297-3.229-0.143-4.544c0.024-0.035,0.078-0.097,0.137-0.157c1.277-1.278,3.459-1.27,4.718-0.011l1.76,1.759l1.761-1.76c1.197-1.199,3.267-1.262,4.543-0.145c0.041,0.03,0.106,0.086,0.168,0.146c0.629,0.629,0.976,1.465,0.977,2.354c0,0.89-0.346,1.727-0.977,2.356l-1.76,1.76l1.758,1.759c0.631,0.629,0.978,1.466,0.978,2.355c0,0.89-0.347,1.727-0.976,2.357c-1.258,1.26-3.453,1.261-4.713,0l-1.758-1.758l-1.758,1.758c-0.631,0.63-1.467,0.978-2.355,0.978c-0.891,0-1.728-0.347-2.356-0.978C58.606,42.648,58.606,40.534,59.906,39.234z M28.997,72.504v-4.105c0-0.551,0.448-1,1-1c1.268,0,3.809-0.975,4.904-2.504c0.188-0.262,0.491-0.416,0.813-0.416c0,0,0,0,0.001,0c0.323,0,0.625,0.156,0.813,0.418c1.119,1.568,2.949,2.504,4.895,2.504c1.949,0,3.779-0.936,4.896-2.502c0.188-0.264,0.49-0.42,0.813-0.42c0,0,0,0,0.001,0c0.322,0,0.625,0.156,0.813,0.418c1.124,1.568,2.957,2.504,4.902,2.504c1.947,0,3.778-0.936,4.899-2.504c0.375-0.524,1.251-0.524,1.627,0c1.121,1.568,2.952,2.504,4.897,2.504c1.949,0,3.779-0.936,4.9-2.504c0.188-0.262,0.49-0.418,0.813-0.418l0,0c0.321,0,0.625,0.156,0.813,0.418c1.094,1.529,3.633,2.504,4.899,2.504c0.552,0,1,0.447,1,1v4.104c0,0.553-0.448,1-1,1c-1.666,0-4.097-0.933-5.688-2.4c-1.492,1.521-3.561,2.4-5.738,2.4c-2.164,0-4.223-0.871-5.713-2.375c-1.489,1.504-3.547,2.375-5.713,2.375c-2.163,0-4.222-0.871-5.713-2.375c-1.488,1.504-3.546,2.375-5.712,2.375c-2.176,0-4.244-0.88-5.735-2.4c-1.592,1.468-4.024,2.4-5.691,2.4C29.445,73.504,28.997,73.057,28.997,72.504z"/>
-      </g>
-    </svg>
+   <svg fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 103.696 103.696" stroke="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="M31.789,39.249l1.759-1.759l-1.76-1.761c-1.233-1.233-1.296-3.229-0.143-4.544c0.025-0.035,0.078-0.097,0.137-0.157 c1.277-1.278,3.46-1.27,4.718-0.011l1.76,1.759l1.76-1.76c1.198-1.199,3.267-1.262,4.544-0.145c0.041,0.03,0.106,0.086,0.167,0.146 c0.629,0.629,0.976,1.465,0.977,2.354c0,0.89-0.346,1.727-0.976,2.356l-1.76,1.76l1.758,1.759c0.63,0.629,0.977,1.466,0.977,2.355 c0,0.89-0.346,1.727-0.976,2.357c-1.258,1.26-3.452,1.261-4.712,0L38.261,42.2l-1.758,1.758c-0.631,0.63-1.467,0.977-2.356,0.977 c-0.89,0-1.727-0.347-2.356-0.977C30.491,42.662,30.491,40.549,31.789,39.249z M59.906,39.234l1.759-1.759l-1.76-1.761 c-1.232-1.233-1.297-3.229-0.143-4.544c0.024-0.035,0.078-0.097,0.137-0.157c1.277-1.278,3.459-1.27,4.718-0.011l1.76,1.759 l1.761-1.76c1.197-1.199,3.267-1.262,4.543-0.145c0.041,0.03,0.106,0.086,0.168,0.146c0.629,0.629,0.976,1.465,0.977,2.354 c0,0.89-0.346,1.727-0.977,2.356l-1.76,1.76l1.758,1.759c0.631,0.629,0.978,1.466,0.978,2.355c0,0.89-0.347,1.727-0.976,2.357 c-1.258,1.26-3.453,1.261-4.713,0l-1.758-1.758l-1.758,1.758c-0.631,0.63-1.467,0.978-2.355,0.978 c-0.891,0-1.728-0.347-2.356-0.978C58.606,42.648,58.606,40.534,59.906,39.234z M28.997,72.504v-4.105c0-0.551,0.448-1,1-1 c1.268,0,3.809-0.975,4.904-2.504c0.188-0.262,0.491-0.416,0.813-0.416c0,0,0,0,0.001,0c0.323,0,0.625,0.156,0.813,0.418 c1.119,1.568,2.949,2.504,4.895,2.504c1.949,0,3.779-0.936,4.896-2.502c0.188-0.264,0.49-0.42,0.813-0.42c0,0,0,0,0.001,0 c0.322,0,0.625,0.156,0.813,0.418c1.124,1.568,2.957,2.504,4.902,2.504c1.947,0,3.778-0.936,4.899-2.504 c0.375-0.524,1.251-0.524,1.627,0c1.121,1.568,2.952,2.504,4.897,2.504c1.949,0,3.779-0.936,4.9-2.504 c0.188-0.262,0.49-0.418,0.813-0.418l0,0c0.321,0,0.625,0.156,0.813,0.418c1.094,1.529,3.633,2.504,4.899,2.504 c0.552,0,1,0.447,1,1v4.104c0,0.553-0.448,1-1,1c-1.666,0-4.097-0.933-5.688-2.4c-1.492,1.521-3.561,2.4-5.738,2.4 c-2.164,0-4.223-0.871-5.713-2.375c-1.489,1.504-3.547,2.375-5.713,2.375c-2.163,0-4.222-0.871-5.713-2.375 c-1.488,1.504-3.546,2.375-5.712,2.375c-2.176,0-4.244-0.88-5.735-2.4c-1.592,1.468-4.024,2.4-5.691,2.4 C29.445,73.504,28.997,73.057,28.997,72.504z M85.467,103.696H18.23C8.179,103.696,0,95.518,0,85.467V18.23 C0,8.178,8.179,0,18.23,0h67.235c10.053,0,18.23,8.178,18.23,18.23v67.235C103.697,95.518,95.518,103.696,85.467,103.696z M18.23,8.579c-5.321,0-9.651,4.33-9.651,9.651v67.235c0,5.321,4.33,9.651,9.651,9.651h67.235c5.321,0,9.651-4.33,9.651-9.651 V18.23c0-5.321-4.33-9.651-9.651-9.651H18.23z"></path> </g> </g></svg>
   ),
 
   // Bruker
   user: (
-    <svg fill="#ffffff" viewBox="0 0 103.695 103.695" stroke="#ffffff">
-      <g>
-        <path d="M37.26,42.99c3.586,0,6.5-2.913,6.5-6.5c0-3.588-2.914-6.5-6.5-6.5c-3.588,0-6.5,2.912-6.5,6.5C30.76,40.076,33.672,42.99,37.26,42.99z M37.26,31.99c2.48,0,4.5,2.019,4.5,4.5s-2.02,4.5-4.5,4.5c-2.482,0-4.5-2.019-4.5-4.5S34.777,31.99,37.26,31.99z M35.26,36.49c0-1.104,0.896-2,2-2s2,0.896,2,2s-0.896,2-2,2S35.26,37.593,35.26,36.49z M65.098,42.99c3.586,0,6.5-2.913,6.5-6.5c0-3.588-2.914-6.5-6.5-6.5c-3.588,0-6.5,2.912-6.5,6.5C58.598,40.076,61.51,42.99,65.098,42.99z M65.098,31.99c2.48,0,4.5,2.019,4.5,4.5s-2.02,4.5-4.5,4.5c-2.481,0-4.5-2.019-4.5-4.5S62.616,31.99,65.098,31.99z M63.098,36.49c0-1.104,0.896-2,2-2c1.104,0,2,0.896,2,2s-0.896,2-2,2C63.994,38.49,63.098,37.593,63.098,36.49z M73.537,76.368c-22.713,20.021-43.377,0-43.377,0c0-11.55,9.711-20.913,21.688-20.913S73.537,64.818,73.537,76.368z"/>
-      </g>
-    </svg>
+    <svg fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 103.695 103.695"  stroke="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="M37.26,42.99c3.586,0,6.5-2.913,6.5-6.5c0-3.588-2.914-6.5-6.5-6.5c-3.588,0-6.5,2.912-6.5,6.5 C30.76,40.076,33.672,42.99,37.26,42.99z M37.26,31.99c2.48,0,4.5,2.019,4.5,4.5s-2.02,4.5-4.5,4.5c-2.482,0-4.5-2.019-4.5-4.5 S34.777,31.99,37.26,31.99z M35.26,36.49c0-1.104,0.896-2,2-2s2,0.896,2,2s-0.896,2-2,2S35.26,37.593,35.26,36.49z M65.098,42.99 c3.586,0,6.5-2.913,6.5-6.5c0-3.588-2.914-6.5-6.5-6.5c-3.588,0-6.5,2.912-6.5,6.5C58.598,40.076,61.51,42.99,65.098,42.99z M65.098,31.99c2.48,0,4.5,2.019,4.5,4.5s-2.02,4.5-4.5,4.5c-2.481,0-4.5-2.019-4.5-4.5S62.616,31.99,65.098,31.99z M63.098,36.49 c0-1.104,0.896-2,2-2c1.104,0,2,0.896,2,2s-0.896,2-2,2C63.994,38.49,63.098,37.593,63.098,36.49z M73.537,76.368 c-22.713,20.021-43.377,0-43.377,0c0-11.55,9.711-20.913,21.688-20.913S73.537,64.818,73.537,76.368z M85.467,103.695H18.23 C8.178,103.695,0,95.518,0,85.465V18.23C0,8.177,8.178,0,18.23,0h67.235c10.053,0,18.23,8.178,18.23,18.23v67.235 C103.696,95.518,95.518,103.695,85.467,103.695z M18.23,8.577c-5.321,0-9.651,4.33-9.651,9.652v67.234 c0,5.322,4.33,9.652,9.651,9.652h67.235c5.321,0,9.651-4.33,9.651-9.652V18.23c0-5.322-4.33-9.652-9.651-9.652L18.23,8.577 L18.23,8.577z"></path> </g> </g></svg>
   ),
 };
 
 
 export default function ChatPage() {
-  const [userId, setUserId]         = useState("");
-  const [messages, setMessages]     = useState<Message[]>([]);
-  const [input, setInput]           = useState("");
-  const [open, setOpen]             = useState(false);
+  const [userId, setUserId] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const [open, setOpen] = useState(false);
   const [isBotTyping, setBotTyping] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Hent/sett bruker‐ID
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [atEdge, setAtEdge] = useState<"none"|"top"|"bottom">("none");
+
+  // initialize userId
   useEffect(() => {
     let id = localStorage.getItem("chatUserId");
     if (!id) {
@@ -70,16 +64,33 @@ export default function ChatPage() {
     setUserId(id);
   }, []);
 
-  // Auto-scroll
+  // scroll & edge‐detection
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const check = () => {
+      if (el.scrollTop === 0) setAtEdge("top");
+      else if (el.scrollHeight - el.scrollTop === el.clientHeight) setAtEdge("bottom");
+      else setAtEdge("none");
+    };
+    el.addEventListener("scroll", check);
+    check();
+    return () => el.removeEventListener("scroll", check);
+  }, [messages, isBotTyping]);
+
+  // auto‐scroll on new
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
   }, [messages, isBotTyping]);
 
   const addMessage = (msg: Message) =>
-    setMessages(prev => [...prev, msg]);
+    setMessages((prev) => [...prev, msg]);
 
   const handleBubble = () => {
-    setOpen(v => !v);
+    setOpen((v) => !v);
     if (!open && messages.length === 0) {
       addMessage({
         text: "Hei! Jeg er Vintra sin AI-assistent. Hva kan jeg hjelpe med?",
@@ -89,20 +100,16 @@ export default function ChatPage() {
     }
   };
 
-  // Sender bruker‐melding og starter bot‐delay
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const txt = input.trim();
     if (!txt || !userId) return;
 
-    // Legg til bruker‐melding
+    // add user message
     addMessage({ text: txt, sender: "user", icon: "user" });
     setInput("");
-
-    // Start “bot skriver” ❐
     setBotTyping(true);
 
-    // Hent svar
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -110,102 +117,125 @@ export default function ChatPage() {
         body: JSON.stringify({ userId, message: txt }),
       });
       const { reply } = await res.json();
-
-      // Delay 2s før visning
       setTimeout(() => {
         setBotTyping(false);
-        if (reply) addMessage({ text: reply, sender: "bot", icon: "inactive" });
-        else       addMessage({ text: "Ingen svar fra boten.", sender: "bot", icon: "error" });
-      }, 2000);
-
+        addMessage({
+          text: reply ?? "Ingen svar fra boten.",
+          sender: "bot",
+          icon: "inactive",
+        });
+      }, 1500);
     } catch {
       setTimeout(() => {
         setBotTyping(false);
-        addMessage({ text: "Noe gikk galt…", sender: "bot", icon: "error" });
-      }, 2000);
+        addMessage({
+          text: "Noe gikk galt…",
+          sender: "bot",
+          icon: "error",
+        });
+      }, 1500);
     }
   };
 
-  // Indeks for siste bot‐melding
+  const isUserTyping = input.trim().length > 0;
+  // index of latest bot message
   const lastBotIndex = messages
-    .map((m,i) => m.sender==="bot"? i : -1)
-    .filter(i=> i>=0)
+    .map((m, i) => (m.sender === "bot" ? i : -1))
+    .filter((i) => i >= 0)
     .pop() ?? -1;
 
   return (
     <>
       <Head><title>Vintra Chat</title></Head>
-
       <div className={styles.container}>
-        {/* Toggle‐knapp */}
-        <div onClick={handleBubble}
-             className={`${styles.bubble} ${isBotTyping?styles.bubbleTyping:""}`}>
+        {/* Toggle */}
+        <div
+          className={`${styles.bubble} ${isBotTyping ? styles.bubbleTyping : ""}`}
+          onClick={handleBubble}
+        >
           💬
         </div>
 
-        {/* Chat‐vindu */}
-        <div className={`${styles.chatWindow} ${open?styles.open:""}`}>
-          <div className={styles.header}>
+        {/* Chat window */}
+        <div className={`${styles.chatWindow} ${open ? styles.open : ""}`}>
+          <header className={styles.header}>
             <h3 className={styles.headerTitle}>Vintra AI</h3>
-          </div>
-          <div ref={scrollRef} className={styles.messages}>
-            {messages.map((m,i) => (
-              <div key={i}
-                   className={`${styles.messageRow} ${
-                     m.sender==="user"
-                       ? styles.messageRowUser
-                       : styles.messageRowBot
-                   }`}>
-                {/* SVG‐avatar kun over siste BOT‐melding */}
-                {i===lastBotIndex && (
-                  <div className={styles.avatar}>
-                    {SVG_ICONS[m.icon]}
-                  </div>
-                )}
-                <div className={`${styles.messageBubble} ${
-                     m.sender==="user"
-                       ? styles.userBubble
-                       : styles.botBubble
-                   }`}>
-                  {m.text}
-                </div>
-              </div>
-            ))}
+          </header>
 
-            {/* Typing‐rad når bot skriver */}
-            {isBotTyping && (
-              <div className={`${styles.messageRow} ${styles.messageRowBot}`}>
-                <div className={styles.avatar}>
-                  {SVG_ICONS.writing}
-                </div>
-                <div className={`${styles.messageBubble} ${styles.botBubble}`}>
-                  <div className={styles.typing}>
-                    <span className={styles.dot}/>
-                    <span className={`${styles.dot} ${styles.delay1}`}/>
-                    <span className={`${styles.dot} ${styles.delay2}`}/>
-                  </div>
-                </div>
-              </div>
-            )}
+           <div
+    ref={scrollRef}
+    className={`${styles.messages} ${styles[atEdge]}`}
+  >
+    {messages.map((m, i) => {
+      const isLastBot = i === lastBotIndex;
+      return (
+        <div
+          key={i}
+          className={`${styles.messageRow} ${
+            m.sender === "user" ? styles.messageRowUser : styles.messageRowBot
+          }`}
+        >
+          {/* only render a single avatar line for the last bot message */}
+          {m.sender === "bot" && isLastBot && (
+            <div className={styles.avatar} data-state="enter">
+              {/*
+                if we’re mid-typing, show the user SVG;
+                otherwise show bot’s saved icon (inactive | error)
+              */}
+              {isUserTyping
+                ? SVG_ICONS["user"]
+                : SVG_ICONS[m.icon]}
+            </div>
+          )}
+
+          <div
+            className={`${styles.messageBubble} ${
+              m.sender === "user" ? styles.userBubble : styles.botBubble
+            }`}
+          >
+            {m.text}
           </div>
+        </div>
+      );
+    })}
+
+    {/* three-dot “bot is writing” indicator */}
+    {isBotTyping && (
+      <div className={`${styles.messageRow} ${styles.messageRowBot}`}>
+        <div className={styles.avatar} data-state="enter">
+          {SVG_ICONS["writing"]}
+        </div>
+        <div className={`${styles.messageBubble} ${styles.botBubble}`}>
+          <div className={styles.typing}>
+            <span className={styles.dot} />
+            <span className={`${styles.dot} ${styles.delay1}`} />
+            <span className={`${styles.dot} ${styles.delay2}`} />
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+
 
           <form onSubmit={handleSubmit} className={styles.form}>
             <input
               type="text"
               value={input}
-              onChange={e=>setInput(e.target.value)}
+              onChange={e => setInput(e.target.value)}
               placeholder="Skriv melding…"
               className={styles.input}
+              autoComplete="off"
             />
             <button type="submit" className={styles.button}>
-              <svg xmlns="http://www.w3.org/2000/svg"
-                   width="20" height="20"
-                   viewBox="0 0 24 24"
-                   fill="none" stroke="currentColor"
-                   strokeWidth="2" strokeLinecap="round"
-                   strokeLinejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13"/>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
               </svg>
             </button>
           </form>

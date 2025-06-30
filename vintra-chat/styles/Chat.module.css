@@ -1,4 +1,5 @@
-/* styles/Chat.module.css */
+
+
 .container {
   position: fixed;
   bottom: 1rem;
@@ -6,13 +7,12 @@
   z-index: 50;
 }
 
-/* Bunn-sirkel (chat toggle) */
+/* Toggle bubble */
 .bubble {
   position: relative;
-  background-color: #fff;
-  border-radius: 9999px;
-  width: 3.5rem;
-  height: 3.5rem;
+  background: #fff;
+  border-radius: 50%;
+  width: 3.5rem; height: 3.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,13 +21,13 @@
   z-index: 51;
 }
 
-/* Pulse-animajon */
+/* pulse */
 @keyframes pulse {
   0%, 100% { transform: scale(1); opacity: 1; }
-  50%     { transform: scale(1.1); opacity: 0.7; }
+  50% { transform: scale(1.1); opacity: 0.7; }
 }
 
-/* Waves-animajon når AI «skriver» */
+/* typing bubble waves */
 @keyframes waves {
   0%   { box-shadow: 0 0 0 0 rgba(59,130,246,0.7); }
   50%  { box-shadow: 0 0 0 10px rgba(59,130,246,0); }
@@ -38,38 +38,32 @@
   animation: waves 1.5s infinite;
 }
 
-/* Chatvinduet */
+/* Chat window */
 .chatWindow {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  margin-bottom: 4rem; /* løfter over bunn-sirkelen */
-  width: 20rem;
-  height: 32.5rem;
-  background-color: #0a0a0a;
+  bottom: 0; right: 0;
+  margin-bottom: 4rem;
+  width: 20rem; height: 32.5rem;
+  background: #0a0a0a;
   border: 1px solid #374151;
   border-radius: 0.75rem;
-  box-shadow:
-    0 10px 15px -3px rgba(0,0,0,0.1),
-    0 4px 6px -2px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
   display: none;
   flex-direction: column;
   z-index: 60;
 }
 
-/* Ny klasse som faktisk brukes i TSX */
 .open {
   display: flex;
 }
 
 .header {
   padding: 1rem;
-  background-color: rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.3);
   border-bottom: 1px solid #374151;
 }
 .headerTitle {
-  color: #fff;
-  font-weight: 600;
+  color: #fff; font-weight: 600;
 }
 
 .messages {
@@ -81,9 +75,45 @@
   gap: 0.75rem;
   font-size: 0.875rem;
   color: #fff;
+
+  /* custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--thumb) transparent;
 }
 
-/* felles flex-container for hver melding */
+.messages::-webkit-scrollbar {
+  width: 6px;
+}
+.messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* default thumb size */
+.messages::-webkit-scrollbar-thumb {
+  background-color: var(--thumb);
+  border-radius: 3px;
+  transition: height 0.3s ease;
+}
+
+/* when the container also has the "top" class */
+.messages.top::-webkit-scrollbar-thumb,
+.messages.bottom::-webkit-scrollbar-thumb {
+  height: 20px; /* shrink when at top or bottom */
+}
+
+@keyframes avatarEnter {
+  from { opacity: 0; transform: scale(.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.avatar {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: avatarEnter 0.4s ease-out forwards;
+}
+
 .messageRow {
   display: flex;
   flex-direction: column;
@@ -92,30 +122,21 @@
 .messageRowBot  { align-items: flex-start; }
 .messageRowUser { align-items: flex-end; }
 
-/* Wrapper for SVG-ikon over bobla */
-.avatar {
-  width: 1.5rem;
-  height: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.25rem;
-}
-/* Sørg for at SVG skalerer riktig */
-.avatar svg {
-  width: 100%;
-  height: 100%;
-}
 
-/* Meldingsbobler */
+
+
 .messageBubble {
   padding: 0.5rem;
   border-radius: 0.75rem;
   max-width: 16rem;
 }
-.botBubble  { background-color: #1f2937; color: #fff; }
-.userBubble { background-color: #fff;    color: #000; }
+.botBubble  { background: #1f2937; color: #fff; }
+.userBubble { background: #fff;     color: #000; }
 
+@keyframes dotPulse {
+  0%,100% { opacity: 0.3; transform: scale(0.5); }
+  50%     { opacity: 1;   transform: scale(1);   }
+}
 .typing {
   display: flex;
   align-items: center;
@@ -127,33 +148,54 @@
   height: 0.3rem;
   background-color: #6b7280;
   border-radius: 50%;
-  animation: pulse 1s infinite;
+  animation: dotPulse 1s infinite;
 }
-.dot.delay1 { animation-delay: 0.2s; }
-.dot.delay2 { animation-delay: 0.4s; }
+.delay1 { animation-delay: 0.2s; }
+.delay2 { animation-delay: 0.4s; }
 
 .form {
-  padding: 0.75rem;
-  background-color: rgba(0,0,0,0.2);
+  padding: 0.5rem;
+  background: rgba(0,0,0,0.2);
   border-top: 1px solid #374151;
   display: flex;
+  align-items: center;
   gap: 0.5rem;
 }
+
 .input {
   flex: 1;
-  background-color: #111827;
+  max-width: 14rem;        /* cap the width */
+  background: #111827;
   padding: 0.5rem 0.75rem;
   border-radius: 0.75rem;
-  outline: none;
   color: #fff;
+  outline: none;
+  font-size: 0.875rem;     /* a bit smaller text */
+  transition: box-shadow 0.2s;
 }
+
+.input:focus {
+  box-shadow: 0 0 0 2px #4a6fc3;
+}
+
 .button {
-  background-color: #fff;
+  background: #4a6fc3;     /* colored background, not white */
   border: none;
-  padding: 0 0.75rem;
-  border-radius: 0.75rem;
+  padding: 0.5rem;         /* square button */
+  border-radius: 50%;      /* circle */
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.button:hover {
+  transform: scale(1.1);
+}
+
+.button svg {
+  width: 1rem;
+  height: 1rem;
+  stroke: white;
 }
