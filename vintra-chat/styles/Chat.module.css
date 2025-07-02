@@ -99,8 +99,8 @@
 .messageRowUser { align-items: flex-end; }
 
 .avatar {
-  width: 2rem;
-  height: 2rem;
+  width: 2.5rem;
+  height: 2.5rem;
   margin-bottom: 0.25rem;
   display: flex;
   align-items: center;
@@ -181,3 +181,94 @@
   height: 1rem;
   stroke: white;
 }
+
+
+
+
+
+
+/* SVG Interactions*/
+
+ .eye {
+      fill: #ffffff;
+      animation: blink-eye 5s infinite ease-in-out;
+    }
+
+    /* Pupiller */
+    .eye-circle {
+      fill: #0b1121;           /* farge på pupill */
+      animation: blink-eye 5s infinite ease-in-out;
+    }
+
+    /* “Lukket øye”-linje */
+    .eye-line {
+      stroke: #ffffff;
+      stroke-width: 5;
+      stroke-linecap: round;
+      opacity: 0;
+      animation: blink-line 5s infinite ease-in-out;
+    }
+
+    /* Animasjonsdefinisjoner */
+    @keyframes blink-eye {
+      0%, 44%, 56%, 100% { opacity: 1; }
+      45%, 55%           { opacity: 0; }
+    }
+    @keyframes blink-line {
+      0%, 44%, 56%, 100% { opacity: 0; }
+      45%, 55%           { opacity: 1; }
+    }
+
+  .face-container {
+      position: relative;
+      width: 300px;       /* Tilpasser SVG-bredden */
+      height: auto;
+    }
+
+    .face-container svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      
+    }
+
+    /* ---- Tåre‐animajson (uendret) ---- */
+    .tear {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: drip 3s ease-in-out infinite;
+      opacity: 0;
+    }
+    .tear:nth-of-type(2) { animation-delay: 0.2s; }
+    .tear:nth-of-type(3) { animation-delay: 0.4s; }
+    @keyframes drip {
+      0%   { opacity: 0; transform: translateY(0)   scale(0); }
+      10%  { opacity: 1; transform: translateY(0)   scale(0.2); }
+      50%  { opacity: 1; transform: translateY(30px) scale(1); }
+      90%  { opacity: 0; transform: translateY(50px) scale(0.2); }
+      100% { opacity: 0; transform: translateY(60px) scale(0); }
+    }
+
+    /* ---- Munnen i loopbølge ---- */
+    .mouth {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: waveScroll 2s linear infinite;
+      
+    }
+    @keyframes waveScroll {
+      0%   { transform: translateX(20px); }
+      100% { transform: translateX(-20px); }
+    }
+
+    /* ---- Masker som skjuler endene ---- */
+    .mask {
+      position: absolute;
+      bottom: 50px;
+      width: 50px;           /* dekker 30px på hver side */
+      height: 30px;
+      pointer-events: none;
+      z-index: 2px;
+    }
+    .mask.left  { left: 26px; }
+    .mask.right { right: 26px; }
