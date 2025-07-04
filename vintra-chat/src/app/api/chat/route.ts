@@ -2,16 +2,26 @@
 import { NextResponse } from "next/server";
 import { db, Timestamp } from "../../../../lib/firebaseAdmin";
 import { openai } from "../../../../lib/openai";
+// 1) Hent inn oversettelsene
+import { translations } from "../../i18n";
 
-type ChatReq = { userId: string; message: string };
+type ChatReq = {
+  userId: string;
+  message: string;
+  lang?: "no" | "en";
+};
+
 type Success = { reply: string };
 type Failure = { error: string };
 
+export const runtime = "nodejs";
+
 export async function POST(request: Request) {
   try {
-    // 1) parse + validate
+    // 2) parse + valider
     const body = (await request.json()) as ChatReq;
-    const { userId, message } = body;
+    const { userId, message, lang = "no" } = body;
+
     if (!userId || !message) {
       return NextResponse.json<Failure>(
         { error: "userId & message required" },
@@ -19,7 +29,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 2) Firestore: save user message
+    // 3) lagre bruker‐melding i Firestore
     const chatRef = db
       .collection("chats")
       .doc(userId)
@@ -30,24 +40,27 @@ export async function POST(request: Request) {
       timestamp: Timestamp.now(),
     });
 
-    // 3) OpenAI call
+    // 4) hent korrekt system‐prompt basert på språk
+    const systemContent = translations[lang].systemPrompt;
+
+    // 5) kall OpenAI
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: "You are a helpful assistant." },
+        { role: "system", content: systemContent },
         { role: "user", content: message },
       ],
     });
     const aiText = completion.choices[0].message?.content ?? "";
 
-    // 4) Firestore: save bot reply
+    // 6) lagre bot‐svar i Firestore
     await chatRef.add({
       sender: "bot",
       text: aiText,
       timestamp: Timestamp.now(),
     });
 
-    // 5) Return reply
+    // 7) returner svar
     return NextResponse.json<Success>({ reply: aiText });
   } catch (err) {
     console.error("API /api/chat error:", err);
@@ -57,6 +70,3 @@ export async function POST(request: Request) {
     );
   }
 }
-
-// (Optional) enforce Node.js runtime so firebase-admin works
-export const runtime = "nodejs";

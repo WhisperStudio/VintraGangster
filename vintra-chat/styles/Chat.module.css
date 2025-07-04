@@ -56,11 +56,86 @@
   padding: 1rem;
   background: rgba(0,0,0,0.3);
   border-bottom: 1px solid #374151;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
 }
 .headerTitle {
   color: #fff;
   font-weight: 600;
 }
+/* wrapper rundt meldinger + overlay */
+.messagesContainer {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* overlay som dekker kun meldings‐delen */
+.overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #0a0a0a;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  color: #eee;
+}
+
+/* øverste rad med lukk‐knapp */
+.overlayHeader {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5rem;
+}
+.overlayClose {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* faner */
+.overlayTabs {
+  display: flex;
+  border-bottom: 1px solid #555;
+}
+.overlayTabs button {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 0.75rem;
+  color: #aaa;
+  cursor: pointer;
+}
+.activeTab {
+  color: white;
+  border-bottom: 2px solid #4a6fc3;
+}
+
+/* innhold i overlay */
+.overlayContent {
+  padding: 1rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* språk‐velger */
+.settingRow {
+  margin-bottom: 1rem;
+}
+.settingRow label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+.settingRow select {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: none;
+}
+
 
 .messages {
   flex: 1;
@@ -147,6 +222,8 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  border-bottom-left-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
 }
 .input {
   flex: 1;
