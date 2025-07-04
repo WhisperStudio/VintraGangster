@@ -1,8 +1,9 @@
 // pages/chat.tsx
 "use client";
 import Head from "next/head";
-import { FormEvent, useEffect, useRef, useState } from "react";
-import * as React from "react";
+import { FormEvent, useEffect, useRef, useState, ChangeEvent } from "react";
+
+
 import styles from "../../../styles/Chat.module.css";
 
 type IconType =
@@ -221,6 +222,8 @@ interface Message {
   } as const;
   // ───────────────────
 
+  // Hent ut type-sikkerhets-type av språkene
+  type Locale = keyof typeof translations;
 
 const SVG_ICONS: Record<IconType, React.ReactNode> = {
   inactive: <>{ <svg viewBox="0 0 100 100">
@@ -356,7 +359,7 @@ export default function ChatPage() {
   const [isBotTyping, setBotTyping] = useState(false);
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [overlayTab, setOverlayTab] = useState<"settings"|"info">("settings");
-  const [language, setLanguage] = useState<keyof typeof translations>("en");
+  const [language, setLanguage] = useState<Locale>("en");
 
   // grab the active translation bundle
   const t = translations[language];
@@ -531,7 +534,9 @@ export default function ChatPage() {
                     <label>{t.settingsLang}</label>
                     <select
                       value={language}
-                      onChange={e => setLanguage(e.target.value as any)}
+                      onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                      setLanguage(e.target.value as Locale)
+                      }
                     >
                       <option value="no">Norsk</option>
                       <option value="sv">Svenska</option>
@@ -543,7 +548,6 @@ export default function ChatPage() {
                       <option value="zh">中文</option>
                       <option value="ja">日本語</option>
                       <option value="ko">한국어</option>
-                      
                     </select>
                   </div>
                 ) : (
