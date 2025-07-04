@@ -3,12 +3,12 @@ import { NextResponse } from "next/server";
 import { db, Timestamp } from "../../../../lib/firebaseAdmin";
 import { openai } from "../../../../lib/openai";
 // 1) Hent inn oversettelsene
-import { translations } from "../../i18n";
+import { translations, Locale } from "../../i18n";
 
 type ChatReq = {
   userId: string;
   message: string;
-  lang?: "no" | "en";
+  lang: Locale;
 };
 
 type Success = { reply: string };

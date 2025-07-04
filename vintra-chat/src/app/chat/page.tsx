@@ -533,6 +533,7 @@ export default function ChatPage() {
                   <div className={styles.settingRow}>
                     <label>{t.settingsLang}</label>
                     <select
+                      className={styles.LangOption}
                       value={language}
                       onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                       setLanguage(e.target.value as Locale)
