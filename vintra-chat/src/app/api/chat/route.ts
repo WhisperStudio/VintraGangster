@@ -5,12 +5,7 @@ import { openai } from "../../../../lib/openai";
 // 1) Hent inn oversettelsene
 import { translations, Locale } from "../../i18n";
 
-type ChatReq = {
-  userId: string;
-  message: string;
-  lang: Locale;
-};
-
+type ChatReq = { userId: string; message: string; lang: Locale };
 type Success = { reply: string };
 type Failure = { error: string };
 
@@ -19,8 +14,7 @@ export const runtime = "nodejs";
 export async function POST(request: Request) {
   try {
     // 2) parse + valider
-    const body = (await request.json()) as ChatReq;
-    const { userId, message, lang = "no" } = body;
+    const { userId, message, lang } = (await request.json()) as ChatReq;
 
     if (!userId || !message) {
       return NextResponse.json<Failure>(
@@ -41,7 +35,7 @@ export async function POST(request: Request) {
     });
 
     // 4) hent korrekt system‐prompt basert på språk
-    const systemContent = translations[lang].systemPrompt;
+    const systemContent = translations[lang]?.systemPrompt ?? translations.no.systemPrompt;
 
     // 5) kall OpenAI
     const completion = await openai.chat.completions.create({

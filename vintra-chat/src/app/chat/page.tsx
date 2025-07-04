@@ -451,7 +451,7 @@ export default function ChatPage() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, message: txt }),
+        body: JSON.stringify({ userId, message: txt, lang: language }),
       });
       const { reply } = await res.json();
       setTimeout(() => {
