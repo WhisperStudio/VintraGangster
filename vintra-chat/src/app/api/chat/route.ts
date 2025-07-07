@@ -2,7 +2,6 @@
 import { NextResponse } from "next/server";
 import { db, Timestamp } from "../../../../lib/firebaseAdmin";
 import { openai } from "../../../../lib/openai";
-// 1) Hent inn oversettelsene
 import { translations, Locale } from "../../i18n";
 
 type ChatReq = { userId: string; message: string; lang: Locale };
@@ -13,9 +12,8 @@ export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
-    // 2) parse + valider
+    // 1) parse + valider
     const { userId, message, lang } = (await request.json()) as ChatReq;
-
     if (!userId || !message) {
       return NextResponse.json<Failure>(
         { error: "userId & message required" },
@@ -23,7 +21,13 @@ export async function POST(request: Request) {
       );
     }
 
-    // 3) lagre bruker‐melding i Firestore
+    // 2) hent brukerens land (om mulig)
+    const country =
+      request.headers.get("x-vercel-ip-country") ||
+      request.headers.get("cf-ipcountry") ||
+      "unknown";
+
+    // 3) lagre bruker‐melding inkl. land
     const chatRef = db
       .collection("chats")
       .doc(userId)
@@ -31,11 +35,13 @@ export async function POST(request: Request) {
     await chatRef.add({
       sender: "user",
       text: message,
+      country,                // <-- nytt felt!
       timestamp: Timestamp.now(),
     });
 
-    // 4) hent korrekt system‐prompt basert på språk
-    const systemContent = translations[lang]?.systemPrompt ?? translations.no.systemPrompt;
+    // 4) hent korrekt system‐prompt
+    const systemContent =
+      translations[lang]?.systemPrompt ?? translations.no.systemPrompt;
 
     // 5) kall OpenAI
     const completion = await openai.chat.completions.create({
@@ -47,7 +53,7 @@ export async function POST(request: Request) {
     });
     const aiText = completion.choices[0].message?.content ?? "";
 
-    // 6) lagre bot‐svar i Firestore
+    // 6) lagre bot‐svar
     await chatRef.add({
       sender: "bot",
       text: aiText,
