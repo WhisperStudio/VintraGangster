@@ -12,7 +12,6 @@ export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
-    // 1) parse + valider
     const { userId, message, lang } = (await request.json()) as ChatReq;
     if (!userId || !message) {
       return NextResponse.json<Failure>(
@@ -21,13 +20,13 @@ export async function POST(request: Request) {
       );
     }
 
-    // 2) hent brukerens land (om mulig)
+    // Hent landet fra Vercel/Cloudflare‐header
     const country =
-      request.headers.get("x-vercel-ip-country") ||
-      request.headers.get("cf-ipcountry") ||
+      request.headers.get("x-vercel-ip-country") ??
+      request.headers.get("cf-ipcountry") ??
       "unknown";
 
-    // 3) lagre bruker‐melding inkl. land
+    // Lagre bruker‐melding inkl. land
     const chatRef = db
       .collection("chats")
       .doc(userId)
@@ -35,32 +34,32 @@ export async function POST(request: Request) {
     await chatRef.add({
       sender: "user",
       text: message,
-      country,                // <-- nytt felt!
+      country,
       timestamp: Timestamp.now(),
     });
 
-    // 4) hent korrekt system‐prompt
+    // Hent korrekt system‐prompt basert på språk
     const systemContent =
       translations[lang]?.systemPrompt ?? translations.no.systemPrompt;
 
-    // 5) kall OpenAI
+    // Kall OpenAI
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         { role: "system", content: systemContent },
-        { role: "user", content: message },
+        { role: "user",   content: message        },
       ],
     });
+
     const aiText = completion.choices[0].message?.content ?? "";
 
-    // 6) lagre bot‐svar
+    // Lagre bot‐svar
     await chatRef.add({
-      sender: "bot",
-      text: aiText,
+      sender:    "bot",
+      text:      aiText,
       timestamp: Timestamp.now(),
     });
 
-    // 7) returner svar
     return NextResponse.json<Success>({ reply: aiText });
   } catch (err) {
     console.error("API /api/chat error:", err);
