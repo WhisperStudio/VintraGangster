@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { db, Timestamp } from "../../../../lib/firebaseAdmin";
 import { openai } from "../../../../lib/openai";
-import { translations, Locale } from "../../i18n";
+import { Locale } from "../../i18n";
 
 type ChatReq = { userId: string; message: string; lang: Locale };
 type Success = { reply: string };
@@ -12,7 +12,7 @@ export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
-    const { userId, message, lang } = (await request.json()) as ChatReq;
+    const { userId, message } = (await request.json()) as ChatReq;
     if (!userId || !message) {
       return NextResponse.json<Failure>(
         { error: "userId & message required" },
