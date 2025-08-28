@@ -3,15 +3,15 @@
 import Head from "next/head";
 import { FormEvent, useEffect, useRef, useState, ChangeEvent } from "react";
 import { ICONS, IconType } from "../../../components/ChatIcons";
-import ScopedCursor from "../../../components/ScopedCursor"; 
-
+import GlobalCursor from "../../../components/ScopedCursor"; // ✅ Bruk global cursor
 import styles from "../../../styles/Chat.module.css";
 
 interface Message {
   text: string;
   sender: "user" | "bot";
-  icon: IconType;   // used only for final bot reply when not idle
-};
+  icon: IconType;
+}
+
  // ───────────────────
   // INLINE TRANSLATIONS
   const translations = {
@@ -148,30 +148,24 @@ interface Message {
   // ───────────────────
 
   // Hent ut type-sikkerhets-type av språkene
-  type Locale = keyof typeof translations;
-
-
-
+ type Locale = keyof typeof translations;
 
 export default function ChatPage() {
-  const [userId, setUserId]         = useState("");
-  const [messages, setMessages]     = useState<Message[]>([]);
-  const [input, setInput]           = useState("");
-  const [open, setOpen]             = useState(false);
+  const [userId, setUserId] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const [open, setOpen] = useState(false);
   const [isBotTyping, setBotTyping] = useState(false);
   const [overlayVisible, setOverlayVisible] = useState(false);
-  const [overlayTab, setOverlayTab] = useState<"settings"|"info">("settings");
+  const [overlayTab, setOverlayTab] = useState<"settings" | "info">("settings");
   const [language, setLanguage] = useState<Locale>("en");
 
-  // grab the active translation bundle
   const t = translations[language];
-
-  const [idleState, setIdleState] = useState<"none"|"smile"|"tired"|"sleep">("none");
+  const [idleState, setIdleState] = useState<"none" | "smile" | "tired" | "sleep">("none");
   const idleTimers = useRef<NodeJS.Timeout[]>([]);
 
-  const [atEdge, setAtEdge] = useState<"none"|"top"|"bottom">("none");
+  const [atEdge, setAtEdge] = useState<"none" | "top" | "bottom">("none");
   const scrollRef = useRef<HTMLDivElement>(null);
-  const scopeRef = useRef<HTMLDivElement | null>(null);
 
   // 1) Generate/restore userId once
   useEffect(() => {
@@ -224,15 +218,14 @@ export default function ChatPage() {
     }
   }, [messages, isBotTyping]);
 
-  const addMessage = (msg: Message) =>
-    setMessages((prev) => [...prev, msg]);
+  const addMessage = (msg: Message) => setMessages((prev) => [...prev, msg]);
 
   const handleBubble = () => {
     setOpen((v) => !v);
     setOverlayVisible(false);
     if (!open && messages.length === 0) {
       addMessage({
-         text: t.initialMessage,
+        text: t.initialMessage,
         sender: "bot",
         icon: "inactive",
       });
@@ -241,7 +234,6 @@ export default function ChatPage() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-     // lukk overlay ved send
     setOverlayVisible(false);
     const txt = input.trim();
     if (!txt || !userId) return;
@@ -277,182 +269,200 @@ export default function ChatPage() {
     }
   };
 
-  const lastBotIndex = messages
-    .map((m, i) => (m.sender === "bot" ? i : -1))
-    .filter((i) => i >= 0)
-    .pop() ?? -1;
+  const lastBotIndex =
+    messages
+      .map((m, i) => (m.sender === "bot" ? i : -1))
+      .filter((i) => i >= 0)
+      .pop() ?? -1;
 
   const isUserTyping = input.trim().length > 0;
 
   return (
-  <>
-    <Head>
-      <title>Vintra Chat</title>
-    </Head>
-    <ScopedCursor scopeRef={scopeRef as React.RefObject<HTMLElement | null>} />
-<div className={styles.container} ref={scopeRef}>
-      {/* Toggle bubble */}
-      <div
-        className={`${styles.bubble} ${isBotTyping ? styles.bubbleTyping : ""}`}
-        onClick={handleBubble}
-      >
-        💬
-      </div>
+    <>
+      <Head>
+        <title>Vintra Chat</title>
+      </Head>
+      <GlobalCursor /> {/* ✅ Custom cursor alltid aktiv */}
 
-      {/* Chat window */}
-      <div className={`${styles.chatWindow} ${open ? styles.open : ""}`}>
-        <header className={styles.header}>
-          <h3 className={styles.headerTitle}>Vintra AI</h3>
-        </header>
+      <div className={styles.container}>
+        {/* Toggle bubble */}
+        <div
+          className={`${styles.bubble} ${isBotTyping ? styles.bubbleTyping : ""}`}
+          onClick={handleBubble}
+        >
+          💬
+        </div>
 
-        {/* --- MELDINGSOMRÅDE + OVERLAY --- */}
-        <div className={styles.messagesContainer}>
-          {/* overlay som dekker bare meldings-lista */}
-          {overlayVisible && (
-            <div className={styles.overlay}>
-              <div className={styles.overlayHeader}>
-                <button
-                  className={styles.overlayClose}
-                  onClick={() => setOverlayVisible(false)}
-                >
-                  ✕
-                </button>
-              </div>
-              <div className={styles.overlayTabs}>
-                <button
-                  className={overlayTab === "settings" ? styles.activeTab : ""}
-                  onClick={() => setOverlayTab("settings")}
-                >
-                  {t.settingsTab}
-                </button>
-                <button
-                  className={overlayTab === "info" ? styles.activeTab : ""}
-                  onClick={() => setOverlayTab("info")}
-                >
-                  {t.infoTab}
-                </button>
-              </div>
-              <div className={styles.overlayContent}>
-                {overlayTab === "settings" ? (
-                  <div className={styles.settingRow}>
-                    <label>{t.settingsLang}</label>
-                    <select
-                      className={styles.LangOption}
-                      value={language}
-                      onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                      setLanguage(e.target.value as Locale)
-                      }
-                    >
-                      <option value="no">Norsk</option>
-                      <option value="sv">Svenska</option>
-                      <option value="da">Dansk</option>
-                      <option value="fi">Suomi</option>
-                      <option value="de">Deutsch</option>
-                      <option value="fr">Français</option>
-                      <option value="es">Español</option>
-                      <option value="zh">中文</option>
-                      <option value="ja">日本語</option>
-                      <option value="ko">한국어</option>
-                    </select>
-                  </div>
-                ) : (
-                  <>
-                    <h5>{t.infoHeading}</h5>
-                      <p>{t.infoText}</p>    
-                  </>
-                )}
-              </div>
-            </div>
-          )}
+        {/* Chat window */}
+        <div className={`${styles.chatWindow} ${open ? styles.open : ""}`}>
+          <header className={styles.header}>
+            <h3 className={styles.headerTitle}>Vintra AI</h3>
+          </header>
 
-          {/* selve meldingslisten */}
-          <div ref={scrollRef} className={`${styles.messages} ${styles[atEdge]}`}>
-            {messages.map((m, i) => {
-              const isLastBot = i === lastBotIndex;
-              const showAvatar = m.sender === "bot" && isLastBot && !isBotTyping;
-
-              const avatarIcon = isUserTyping
-              ? ICONS.user
-              : idleState !== "none" && messages.length > 0 && isLastBot
-              ? ICONS[idleState as IconType]
-              : ICONS[m.icon];
-
-              return (
-                <div
-                  key={i}
-                  className={`${styles.messageRow} ${
-                    m.sender === "user"
-                      ? styles.messageRowUser
-                      : styles.messageRowBot
-                  }`}
-                >
-                  {showAvatar && (
-                    <div className={styles.avatar}>{avatarIcon}</div>
-                  )}
-                  <div
-                    className={`${styles.messageBubble} ${
-                      m.sender === "user"
-                        ? styles.userBubble
-                        : styles.botBubble
-                    }`}
+          {/* --- MELDINGSOMRÅDE + OVERLAY --- */}
+          <div className={styles.messagesContainer}>
+            {overlayVisible && (
+              <div className={styles.overlay}>
+                <div className={styles.overlayHeader}>
+                  <button
+                    className={styles.overlayClose}
+                    onClick={() => setOverlayVisible(false)}
                   >
-                    {m.text}
-                  </div>
+                    ✕
+                  </button>
                 </div>
-              );
-            })}
-
-            {isBotTyping && (
-              <div className={`${styles.messageRow} ${styles.messageRowBot}`}>
-                <div className={styles.avatar}>{ICONS.writing}</div>
-                <div className={`${styles.messageBubble} ${styles.botBubble}`}>
-                  <div className={styles.typing}>
-                    <span className={styles.dot} />
-                    <span className={`${styles.dot} ${styles.delay1}`} />
-                    <span className={`${styles.dot} ${styles.delay2}`} />
-                  </div>
+                <div className={styles.overlayTabs}>
+                  <button
+                    className={overlayTab === "settings" ? styles.activeTab : ""}
+                    onClick={() => setOverlayTab("settings")}
+                  >
+                    {t.settingsTab}
+                  </button>
+                  <button
+                    className={overlayTab === "info" ? styles.activeTab : ""}
+                    onClick={() => setOverlayTab("info")}
+                  >
+                    {t.infoTab}
+                  </button>
+                </div>
+                <div className={styles.overlayContent}>
+                  {overlayTab === "settings" ? (
+                    <div className={styles.settingRow}>
+                      <label>{t.settingsLang}</label>
+                      <select
+                        className={styles.LangOption}
+                        value={language}
+                        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                          setLanguage(e.target.value as Locale)
+                        }
+                      >
+                        <option value="no">Norsk</option>
+                        <option value="sv">Svenska</option>
+                        <option value="da">Dansk</option>
+                        <option value="fi">Suomi</option>
+                        <option value="de">Deutsch</option>
+                        <option value="fr">Français</option>
+                        <option value="es">Español</option>
+                        <option value="zh">中文</option>
+                        <option value="ja">日本語</option>
+                        <option value="ko">한국어</option>
+                      </select>
+                    </div>
+                  ) : (
+                    <>
+                      <h5>{t.infoHeading}</h5>
+                      <p>{t.infoText}</p>
+                    </>
+                  )}
                 </div>
               </div>
             )}
-          </div>
-        </div>
-        {/* --- SLUTT MELDINGSOMRÅDE --- */}
 
-        {/* footer med input + knapp */}
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <input
+            {/* meldingsliste */}
+            <div ref={scrollRef} className={`${styles.messages} ${styles[atEdge]}`}>
+              {messages.map((m, i) => {
+                const isLastBot = i === lastBotIndex;
+                const showAvatar = m.sender === "bot" && isLastBot && !isBotTyping;
+
+                const avatarIcon = isUserTyping
+                  ? ICONS.user
+                  : idleState !== "none" && messages.length > 0 && isLastBot
+                  ? ICONS[idleState as IconType]
+                  : ICONS[m.icon];
+
+                return (
+                  <div
+                    key={i}
+                    className={`${styles.messageRow} ${
+                      m.sender === "user" ? styles.messageRowUser : styles.messageRowBot
+                    }`}
+                  >
+                    {showAvatar && <div className={styles.avatar}>{avatarIcon}</div>}
+                    <div
+                      className={`${styles.messageBubble} ${
+                        m.sender === "user" ? styles.userBubble : styles.botBubble
+                      }`}
+                    >
+                      {m.text}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {isBotTyping && (
+                <div className={`${styles.messageRow} ${styles.messageRowBot}`}>
+                  <div className={styles.avatar}>{ICONS.writing}</div>
+                  <div className={`${styles.messageBubble} ${styles.botBubble}`}>
+                    <div className={styles.typing}>
+                      <span className={styles.dot} />
+                      <span className={`${styles.dot} ${styles.delay1}`} />
+                      <span className={`${styles.dot} ${styles.delay2}`} />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* footer med input */}
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <input
               type="text"
               value={input}
-              onChange={e => setInput(e.target.value)}
+              onChange={(e) => setInput(e.target.value)}
               placeholder={t.placeholder}
               className={styles.input}
               autoComplete="off"
-          />
-          <button type="submit" className={styles.button}>
-            {/* papirfly-ikon */}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24">
-              <line x1="22" y1="2" x2="11" y2="13" />
-              <polygon points="22 2 15 22 11 13 2 9 22 2" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            className={styles.button}
-            onClick={() => {
-              setOverlayVisible(v => !v);
-              setOverlayTab("settings");
-            }}
-          >
-            {/* …-ikon */}
-            <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M19 13C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12C18 12.5523 18.4477 13 19 13Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M5 13C5.55228 13 6 12.5523 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-        </form>
+            />
+            <button type="submit" className={styles.button}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                stroke="white"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              className={styles.button}
+              onClick={() => {
+                setOverlayVisible((v) => !v);
+                setOverlayTab("settings");
+              }}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#ffffff"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M19 13C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12C18 12.5523 18.4477 13 19 13Z"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M5 13C5.55228 13 6 12.5523 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13Z"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
-  </>
-);
+    </>
+  );
 }
