@@ -217,77 +217,99 @@ export default function ChatPage() {
   }, [messages, isBotTyping]);
 
   // 5) Remote cursor — receiver (og lokal fallback)
-  useEffect(() => {
-    const ring = document.getElementById("remote-cursor") as HTMLDivElement | null;
-    if (!ring) return;
+useEffect(() => {
+  const ring = document.getElementById("remote-cursor") as HTMLDivElement | null;
+  if (!ring) return;
 
-    const setPos = (x: number, y: number) => {
-      ring.style.transform = `translate(${x - ring.offsetWidth / 2}px, ${y - ring.offsetHeight / 2}px)`;
-    };
+  // ---- Typer for meldinger fra parent ----
+  type CursorMessage =
+    | { type: "cursor-enter" }
+    | { type: "cursor-leave" }
+    | { type: "cursor-down" }
+    | { type: "cursor-up" }
+    | { type: "cursor-move"; x: number; y: number; down?: boolean };
 
-    // Siste tidspunkt vi mottok parent-events.
-    let lastParentMsg = 0;
+  const isNumber = (v: unknown): v is number =>
+    typeof v === "number" && Number.isFinite(v);
 
-    const onMessage = (e: MessageEvent) => {
-      const msg: any = e.data || {};
-      switch (msg.type) {
-        case "cursor-enter":
-          ring.classList.remove("hidden");
-          lastParentMsg = Date.now();
-          break;
-        case "cursor-leave":
-          ring.classList.add("hidden");
-          ring.classList.remove("active", "hover");
-          lastParentMsg = Date.now();
-          break;
-        case "cursor-move":
-          ring.classList.remove("hidden");
-          setPos(msg.x, msg.y);
-          ring.classList.toggle("active", !!msg.down);
-          lastParentMsg = Date.now();
-          break;
-        case "cursor-down":
-          ring.classList.add("active");
-          lastParentMsg = Date.now();
-          break;
-        case "cursor-up":
-          ring.classList.remove("active");
-          lastParentMsg = Date.now();
-          break;
-      }
-    };
+  const isCursorMessage = (d: unknown): d is CursorMessage => {
+    if (!d || typeof d !== "object") return false;
+    const rec = d as Record<string, unknown>;
+    const t = rec.type;
+    if (t === "cursor-enter" || t === "cursor-leave" || t === "cursor-down" || t === "cursor-up")
+      return true;
+    if (t === "cursor-move") return isNumber(rec.x) && isNumber(rec.y);
+    return false;
+  };
 
-    window.addEventListener("message", onMessage);
+  const setPos = (x: number, y: number) => {
+    ring.style.transform = `translate(${x - ring.offsetWidth / 2}px, ${
+      y - ring.offsetHeight / 2
+    }px)`;
+  };
 
-    // Lokal fallback: hvis ingen parent-meldinger på 150ms, følg lokal mus.
-    const FALLBACK_MS = 150;
-    const onLocalMove = (e: MouseEvent) => {
-      const now = Date.now();
-      if (now - lastParentMsg > FALLBACK_MS) {
+  let lastParentMsg = 0;
+
+  const onMessage = (e: MessageEvent) => {
+    const data: unknown = e.data;
+    if (!isCursorMessage(data)) return;
+
+    switch (data.type) {
+      case "cursor-enter":
         ring.classList.remove("hidden");
-        setPos(e.clientX, e.clientY);
-      }
-    };
-    const onLocalDown = () => {
-      const now = Date.now();
-      if (now - lastParentMsg > FALLBACK_MS) ring.classList.add("active");
-    };
-    const onLocalUp = () => {
-      const now = Date.now();
-      if (now - lastParentMsg > FALLBACK_MS) ring.classList.remove("active");
-    };
+        lastParentMsg = Date.now();
+        break;
+      case "cursor-leave":
+        ring.classList.add("hidden");
+        ring.classList.remove("active", "hover");
+        lastParentMsg = Date.now();
+        break;
+      case "cursor-move":
+        ring.classList.remove("hidden");
+        setPos(data.x, data.y);
+        ring.classList.toggle("active", !!data.down);
+        lastParentMsg = Date.now();
+        break;
+      case "cursor-down":
+        ring.classList.add("active");
+        lastParentMsg = Date.now();
+        break;
+      case "cursor-up":
+        ring.classList.remove("active");
+        lastParentMsg = Date.now();
+        break;
+    }
+  };
 
-    window.addEventListener("mousemove", onLocalMove, { passive: true });
-    window.addEventListener("mousedown", onLocalDown);
-    window.addEventListener("mouseup", onLocalUp);
+  window.addEventListener("message", onMessage);
 
-    return () => {
-      window.removeEventListener("message", onMessage);
-      window.removeEventListener("mousemove", onLocalMove);
-      window.removeEventListener("mousedown", onLocalDown);
-      window.removeEventListener("mouseup", onLocalUp);
-    };
-  }, []);
+  // Lokal fallback hvis ingen parent-meldinger
+  const FALLBACK_MS = 150;
+  const onLocalMove = (e: MouseEvent) => {
+    if (Date.now() - lastParentMsg > FALLBACK_MS) {
+      ring.classList.remove("hidden");
+      setPos(e.clientX, e.clientY);
+    }
+  };
+  const onLocalDown = () => {
+    if (Date.now() - lastParentMsg > FALLBACK_MS) ring.classList.add("active");
+  };
+  const onLocalUp = () => {
+    if (Date.now() - lastParentMsg > FALLBACK_MS) ring.classList.remove("active");
+  };
+
+  window.addEventListener("mousemove", onLocalMove, { passive: true });
+  window.addEventListener("mousedown", onLocalDown);
+  window.addEventListener("mouseup", onLocalUp);
+
+  return () => {
+    window.removeEventListener("message", onMessage);
+    window.removeEventListener("mousemove", onLocalMove);
+    window.removeEventListener("mousedown", onLocalDown);
+    window.removeEventListener("mouseup", onLocalUp);
+  };
+}, []);
+
 
   const addMessage = (msg: Message) => setMessages((prev) => [...prev, msg]);
 
