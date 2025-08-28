@@ -163,7 +163,6 @@ export default function ChatPage() {
   const t = translations[language];
   const [idleState, setIdleState] = useState<"none" | "smile" | "tired" | "sleep">("none");
   const idleTimers = useRef<NodeJS.Timeout[]>([]);
-
   const [atEdge, setAtEdge] = useState<"none" | "top" | "bottom">("none");
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -177,7 +176,7 @@ export default function ChatPage() {
     setUserId(id);
   }, []);
 
-  // 2) Idle‐state scheduling
+  // 2) Idle-state scheduling
   const resetIdleTimers = () => {
     idleTimers.current.forEach(clearTimeout);
     idleTimers.current = [];
@@ -197,7 +196,7 @@ export default function ChatPage() {
     return () => idleTimers.current.forEach(clearTimeout);
   }, []);
 
-  // 3) Scroll‐edge detection
+  // 3) Scroll-edge detection
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -211,7 +210,7 @@ export default function ChatPage() {
     return () => el.removeEventListener("scroll", check);
   }, []);
 
-  // 4) Auto‐scroll on new
+  // 4) Auto-scroll on new
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -282,7 +281,7 @@ export default function ChatPage() {
       <Head>
         <title>Vintra Chat</title>
       </Head>
-      <GlobalCursor /> {/* ✅ Custom cursor alltid aktiv */}
+      <GlobalCursor /> {/* ✅ Custom cursor alltid aktiv på hele siden */}
 
       <div className={styles.container}>
         {/* Toggle bubble */}
@@ -404,7 +403,7 @@ export default function ChatPage() {
             </div>
           </div>
 
-          {/* footer med input */}
+          {/* footer */}
           <form onSubmit={handleSubmit} className={styles.form}>
             <input
               type="text"
@@ -415,13 +414,7 @@ export default function ChatPage() {
               autoComplete="off"
             />
             <button type="submit" className={styles.button}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                stroke="white"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24">
                 <line x1="22" y1="2" x2="11" y2="13" />
                 <polygon points="22 2 15 22 11 13 2 9 22 2" />
               </svg>
@@ -434,30 +427,10 @@ export default function ChatPage() {
                 setOverlayTab("settings");
               }}
             >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#ffffff"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M19 13C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12C18 12.5523 18.4477 13 19 13Z"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M5 13C5.55228 13 6 12.5523 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13Z"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+              <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M19 13C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12C18 12.5523 18.4477 13 19 13Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M5 13C5.55228 13 6 12.5523 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
           </form>
