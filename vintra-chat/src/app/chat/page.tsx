@@ -215,22 +215,24 @@ export default function ChatPage() {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, isBotTyping]);
-
-  // 5) Remote cursor — receiver (og lokal fallback)
+// 5) Remote cursor — receiver (og lokal fallback)
 useEffect(() => {
   const ring = document.getElementById("remote-cursor") as HTMLDivElement | null;
   if (!ring) return;
 
-  // ---- Typer for meldinger fra parent ----
+  // Hva vi regner som klikkbart
+  const INTERACTIVE_SELECTOR =
+    'a,button,[role="button"],input,select,textarea,label,[data-clickable="true"],.clickable';
+
+  const isNumber = (v: unknown): v is number =>
+    typeof v === "number" && Number.isFinite(v);
+
   type CursorMessage =
     | { type: "cursor-enter" }
     | { type: "cursor-leave" }
     | { type: "cursor-down" }
     | { type: "cursor-up" }
     | { type: "cursor-move"; x: number; y: number; down?: boolean };
-
-  const isNumber = (v: unknown): v is number =>
-    typeof v === "number" && Number.isFinite(v);
 
   const isCursorMessage = (d: unknown): d is CursorMessage => {
     if (!d || typeof d !== "object") return false;
@@ -243,9 +245,14 @@ useEffect(() => {
   };
 
   const setPos = (x: number, y: number) => {
-    ring.style.transform = `translate(${x - ring.offsetWidth / 2}px, ${
-      y - ring.offsetHeight / 2
-    }px)`;
+    ring.style.transform = `translate(${x - ring.offsetWidth / 2}px, ${y - ring.offsetHeight / 2}px)`;
+  };
+
+  const updateHoverAt = (x: number, y: number) => {
+    // element under den posisjonen
+    const el = document.elementFromPoint(x, y) as Element | null;
+    const clickable = !!el?.closest?.(INTERACTIVE_SELECTOR);
+    ring.classList.toggle("hover", clickable);
   };
 
   let lastParentMsg = 0;
@@ -268,6 +275,7 @@ useEffect(() => {
         ring.classList.remove("hidden");
         setPos(data.x, data.y);
         ring.classList.toggle("active", !!data.down);
+        updateHoverAt(data.x, data.y);
         lastParentMsg = Date.now();
         break;
       case "cursor-down":
@@ -283,12 +291,13 @@ useEffect(() => {
 
   window.addEventListener("message", onMessage);
 
-  // Lokal fallback hvis ingen parent-meldinger
+  // Lokal fallback hvis ingen parent-meldinger 🙃
   const FALLBACK_MS = 150;
   const onLocalMove = (e: MouseEvent) => {
     if (Date.now() - lastParentMsg > FALLBACK_MS) {
       ring.classList.remove("hidden");
       setPos(e.clientX, e.clientY);
+      updateHoverAt(e.clientX, e.clientY);
     }
   };
   const onLocalDown = () => {
@@ -378,46 +387,50 @@ useEffect(() => {
 
       {/* Global style på denne siden: skjul native cursor og style ringen */}
       <style jsx global>{`
-        html, body {
-          cursor: none;
-        }
-        #remote-cursor {
-          position: fixed;
-          z-index: 2147483647;
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          border: 2px solid #fff;
-          pointer-events: none;
-          transform: translate(-100px, -100px);
-          transition:
-            transform 16ms linear,
-            width 80ms ease, height 80ms ease,
-            border-color 80ms ease,
-            box-shadow 120ms ease,
-            background-color 120ms ease,
-            opacity 120ms ease,
-            filter 120ms ease;
-          box-shadow: 0 0 8px rgba(255,255,255,.25);
-        }
-        #remote-cursor.hover {
-          border-color: #b40f3a;
-          box-shadow: 0 0 14px rgba(180,15,58,.55);
-          background: radial-gradient(transparent 60%, rgba(180,15,58,.12));
-          width: 22px;
-          height: 22px;
-        }
-        #remote-cursor.active {
-          border-color: #3bb4ff;
-          box-shadow: 0 0 16px rgba(59,180,255,.55);
-          background: radial-gradient(transparent 60%, rgba(59,180,255,.10));
-          width: 18px;
-          height: 18px;
-        }
-        #remote-cursor.hidden {
-          opacity: 0;
-        }
-      `}</style>
+  /* Hide native cursor EVERYWHERE on this page */
+  html, body, * {
+    cursor: none !important;
+  }
+
+  #remote-cursor {
+    position: fixed;
+    z-index: 2147483647;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    pointer-events: none;
+    transform: translate(-100px, -100px);
+    transition:
+      transform 16ms linear,
+      width 80ms ease, height 80ms ease,
+      border-color 80ms ease,
+      box-shadow 120ms ease,
+      background-color 120ms ease,
+      opacity 120ms ease,
+      filter 120ms ease;
+    box-shadow: 0 0 8px rgba(255,255,255,.25);
+  }
+  /* Red hover state */
+  #remote-cursor.hover {
+    border-color: #b40f3a;
+    box-shadow: 0 0 14px rgba(180,15,58,.55);
+    background: radial-gradient(transparent 60%, rgba(180,15,58,.12));
+    width: 22px;
+    height: 22px;
+  }
+  /* Blue active (mouse down) state */
+  #remote-cursor.active {
+    border-color: #3bb4ff;
+    box-shadow: 0 0 16px rgba(59,180,255,.55);
+    background: radial-gradient(transparent 60%, rgba(59,180,255,.10));
+    width: 18px;
+    height: 18px;
+  }
+  #remote-cursor.hidden {
+    opacity: 0;
+  }
+`}</style>
 
       {/* Selve cursor-elementet */}
       <div id="remote-cursor" className="hidden" aria-hidden="true" />
