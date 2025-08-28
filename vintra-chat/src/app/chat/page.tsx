@@ -395,8 +395,8 @@ useEffect(() => {
   #remote-cursor {
     position: fixed;
     z-index: 2147483647;
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     border: 2px solid #fff;
     pointer-events: none;
@@ -416,16 +416,16 @@ useEffect(() => {
     border-color: #b40f3a;
     box-shadow: 0 0 14px rgba(180,15,58,.55);
     background: radial-gradient(transparent 60%, rgba(180,15,58,.12));
-    width: 22px;
-    height: 22px;
+    width: 26px;
+    height: 26px;
   }
   /* Blue active (mouse down) state */
   #remote-cursor.active {
     border-color: #3bb4ff;
     box-shadow: 0 0 16px rgba(59,180,255,.55);
     background: radial-gradient(transparent 60%, rgba(59,180,255,.10));
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
   }
   #remote-cursor.hidden {
     opacity: 0;
