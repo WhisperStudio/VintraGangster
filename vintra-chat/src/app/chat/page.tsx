@@ -3,7 +3,6 @@
 import Head from "next/head";
 import { FormEvent, useEffect, useRef, useState, ChangeEvent } from "react";
 import { ICONS, IconType } from "../../../components/ChatIcons";
-import GlobalCursor from "../../../components/ScopedCursor"; // ✅ Bruk global cursor
 import styles from "../../../styles/Chat.module.css";
 
 interface Message {
@@ -217,6 +216,79 @@ export default function ChatPage() {
     }
   }, [messages, isBotTyping]);
 
+  // 5) Remote cursor — receiver (og lokal fallback)
+  useEffect(() => {
+    const ring = document.getElementById("remote-cursor") as HTMLDivElement | null;
+    if (!ring) return;
+
+    const setPos = (x: number, y: number) => {
+      ring.style.transform = `translate(${x - ring.offsetWidth / 2}px, ${y - ring.offsetHeight / 2}px)`;
+    };
+
+    // Siste tidspunkt vi mottok parent-events.
+    let lastParentMsg = 0;
+
+    const onMessage = (e: MessageEvent) => {
+      const msg: any = e.data || {};
+      switch (msg.type) {
+        case "cursor-enter":
+          ring.classList.remove("hidden");
+          lastParentMsg = Date.now();
+          break;
+        case "cursor-leave":
+          ring.classList.add("hidden");
+          ring.classList.remove("active", "hover");
+          lastParentMsg = Date.now();
+          break;
+        case "cursor-move":
+          ring.classList.remove("hidden");
+          setPos(msg.x, msg.y);
+          ring.classList.toggle("active", !!msg.down);
+          lastParentMsg = Date.now();
+          break;
+        case "cursor-down":
+          ring.classList.add("active");
+          lastParentMsg = Date.now();
+          break;
+        case "cursor-up":
+          ring.classList.remove("active");
+          lastParentMsg = Date.now();
+          break;
+      }
+    };
+
+    window.addEventListener("message", onMessage);
+
+    // Lokal fallback: hvis ingen parent-meldinger på 150ms, følg lokal mus.
+    const FALLBACK_MS = 150;
+    const onLocalMove = (e: MouseEvent) => {
+      const now = Date.now();
+      if (now - lastParentMsg > FALLBACK_MS) {
+        ring.classList.remove("hidden");
+        setPos(e.clientX, e.clientY);
+      }
+    };
+    const onLocalDown = () => {
+      const now = Date.now();
+      if (now - lastParentMsg > FALLBACK_MS) ring.classList.add("active");
+    };
+    const onLocalUp = () => {
+      const now = Date.now();
+      if (now - lastParentMsg > FALLBACK_MS) ring.classList.remove("active");
+    };
+
+    window.addEventListener("mousemove", onLocalMove, { passive: true });
+    window.addEventListener("mousedown", onLocalDown);
+    window.addEventListener("mouseup", onLocalUp);
+
+    return () => {
+      window.removeEventListener("message", onMessage);
+      window.removeEventListener("mousemove", onLocalMove);
+      window.removeEventListener("mousedown", onLocalDown);
+      window.removeEventListener("mouseup", onLocalUp);
+    };
+  }, []);
+
   const addMessage = (msg: Message) => setMessages((prev) => [...prev, msg]);
 
   const handleBubble = () => {
@@ -281,7 +353,52 @@ export default function ChatPage() {
       <Head>
         <title>Vintra Chat</title>
       </Head>
-      <GlobalCursor /> {/* ✅ Custom cursor alltid aktiv på hele siden */}
+
+      {/* Global style på denne siden: skjul native cursor og style ringen */}
+      <style jsx global>{`
+        html, body {
+          cursor: none;
+        }
+        #remote-cursor {
+          position: fixed;
+          z-index: 2147483647;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          border: 2px solid #fff;
+          pointer-events: none;
+          transform: translate(-100px, -100px);
+          transition:
+            transform 16ms linear,
+            width 80ms ease, height 80ms ease,
+            border-color 80ms ease,
+            box-shadow 120ms ease,
+            background-color 120ms ease,
+            opacity 120ms ease,
+            filter 120ms ease;
+          box-shadow: 0 0 8px rgba(255,255,255,.25);
+        }
+        #remote-cursor.hover {
+          border-color: #b40f3a;
+          box-shadow: 0 0 14px rgba(180,15,58,.55);
+          background: radial-gradient(transparent 60%, rgba(180,15,58,.12));
+          width: 22px;
+          height: 22px;
+        }
+        #remote-cursor.active {
+          border-color: #3bb4ff;
+          box-shadow: 0 0 16px rgba(59,180,255,.55);
+          background: radial-gradient(transparent 60%, rgba(59,180,255,.10));
+          width: 18px;
+          height: 18px;
+        }
+        #remote-cursor.hidden {
+          opacity: 0;
+        }
+      `}</style>
+
+      {/* Selve cursor-elementet */}
+      <div id="remote-cursor" className="hidden" aria-hidden="true" />
 
       <div className={styles.container}>
         {/* Toggle bubble */}
@@ -428,9 +545,24 @@ export default function ChatPage() {
               }}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M19 13C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12C18 12.5523 18.4477 13 19 13Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M5 13C5.55228 13 6 12.5523 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path
+                  d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M19 13C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12C18 12.5523 18.4477 13 19 13Z"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M5 13C5.55228 13 6 12.5523 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13Z"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </button>
           </form>
