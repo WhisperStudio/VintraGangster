@@ -11,7 +11,6 @@ const RING_BLUE_GLOW = "rgba(59,180,255,.55)";
 type RingProps = {
   $hover: boolean;
   $active: boolean;
-  $visible: boolean;
 };
 
 const Ring = styled.div<RingProps>`
@@ -28,9 +27,7 @@ const Ring = styled.div<RingProps>`
     border-color 80ms ease,
     box-shadow 120ms ease,
     background-color 120ms ease,
-    opacity 120ms ease,
     filter 120ms ease;
-  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
 
   border: 2px solid
     ${({ $active, $hover }) => ($active ? RING_BLUE : $hover ? RING_RED : "#ffffff")};
@@ -54,63 +51,43 @@ const Ring = styled.div<RingProps>`
   @media (max-width: 768px) { display: none; }
 `;
 
-/** Accept any ref-like object with `current: HTMLElement | null` */
-type ScopeRef = { current: HTMLElement | null };
-
-type Props = {
-  scopeRef: ScopeRef;
-};
-
 const INTERACTIVE_SELECTOR =
   'a,button,[role="button"],input,select,textarea,label,[data-clickable="true"],.clickable';
 
-export default function ScopedCursor({ scopeRef }: Props) {
+export default function Cursor() {
   const ringRef = useRef<HTMLDivElement | null>(null);
-  const [inside, setInside] = useState(false);
   const [hover, setHover] = useState(false);
   const [active, setActive] = useState(false);
 
   useEffect(() => {
-    const scope = scopeRef.current;
     const ring = ringRef.current;
-    if (!scope || !ring) return;
+    if (!ring) return;
 
-    const onEnter = () => {
-      setInside(true);
-      scope.classList.add("cursorScope"); // hide native cursor inside scope
-    };
-    const onLeave = () => {
-      setInside(false);
-      setActive(false);
-      scope.classList.remove("cursorScope");
-      ring.style.transform = "translate3d(-100px,-100px,0)";
-    };
+    document.body.style.cursor = "none"; // skjul native cursor i hele dokumentet
+
     const onMove = (e: MouseEvent) => {
       const size = ring.offsetWidth;
       ring.style.transform = `translate3d(${e.clientX - size / 2}px, ${
         e.clientY - size / 2
       }px, 0)`;
+
       const t = e.target as Element | null;
       setHover(!!t?.closest(INTERACTIVE_SELECTOR));
     };
     const onDown = () => setActive(true);
     const onUp = () => setActive(false);
 
-    scope.addEventListener("mouseenter", onEnter);
-    scope.addEventListener("mouseleave", onLeave);
-    scope.addEventListener("mousemove", onMove);
-    scope.addEventListener("mousedown", onDown);
-    scope.addEventListener("mouseup", onUp);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mousedown", onDown);
+    window.addEventListener("mouseup", onUp);
 
     return () => {
-      scope.removeEventListener("mouseenter", onEnter);
-      scope.removeEventListener("mouseleave", onLeave);
-      scope.removeEventListener("mousemove", onMove);
-      scope.removeEventListener("mousedown", onDown);
-      scope.removeEventListener("mouseup", onUp);
-      scope.classList.remove("cursorScope");
+      document.body.style.cursor = "";
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mousedown", onDown);
+      window.removeEventListener("mouseup", onUp);
     };
-  }, [scopeRef]);
+  }, []);
 
-  return <Ring ref={ringRef} $hover={hover} $active={active} $visible={inside} aria-hidden />;
+  return <Ring ref={ringRef} $hover={hover} $active={active} aria-hidden />;
 }
